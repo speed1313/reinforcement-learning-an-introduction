@@ -101,7 +101,7 @@ class State:
             print(out)
         print('-------------')
 
-
+# To get all states, it generate all sattes
 def get_all_states_impl(current_state, current_symbol, all_states):
     for i in range(BOARD_ROWS):
         for j in range(BOARD_COLS):
@@ -213,6 +213,7 @@ class Player:
 
         for i in reversed(range(len(states) - 1)):
             state = states[i]
+            # temporal difference
             td_error = self.greedy[i] * (
                 self.estimations[states[i + 1]] - self.estimations[state]
             )
@@ -230,12 +231,14 @@ class Player:
                     next_states.append(state.next_state(
                         i, j, self.symbol).hash())
 
+        # exploration
         if np.random.rand() < self.epsilon:
             action = next_positions[np.random.randint(len(next_positions))]
             action.append(self.symbol)
             self.greedy[-1] = False
             return action
 
+        # exploitation
         values = []
         for hash_val, pos in zip(next_states, next_positions):
             values.append((self.estimations[hash_val], pos))
